@@ -376,6 +376,8 @@ app.post('/logout', async (req, res) => {
             res.status(500).json({ success: false, message: 'Logout failed.' });
         }
 });
+app.set('trust proxy', 1); // Use 1 if behind a single proxy, or 'true' for trusting all
+
 // Start the Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
