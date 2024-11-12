@@ -9,17 +9,16 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const validator = require('validator');
 const mailgun = require('mailgun-js'); // Import mailgun
-
 const app = express();
 const PORT = process.env.PORT || 3000;
-const mongoUri = process.env.MONGO_URI;
+const mongoUri = process.env.MONGODB_URI;
 
 /// Session management with MongoDB store
 app.use(session({
     secret: process.env.SESSION_SECRET, // Ensure you have a SESSION_SECRET in your .env file
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: 'mongodb+srv://adrianmainim:whwqskNZ36tevpbN@mainimreyneil.ygzsw.mongodb.net/' }), // Use your MongoDB URI
+    store: MongoStore.create({ mongoUrl: mongoUri }), // Use your MongoDB URI
     cookie: {
     secure: false, // Set to true if you're using HTTPS
     httpOnly: true,
@@ -73,7 +72,7 @@ const loginLimiter = rateLimit({
 const mg = mailgun({ apiKey: process.env.MAILGUN_API_KEY, domain: process.env.MAILGUN_DOMAIN });
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://adrianmainim:whwqskNZ36tevpbN@mainimreyneil.ygzsw.mongodb.net/').then(() => {
+mongoose.connect(mongoUri).then(() => {
     console.log('Connected to MongoDB');
 }).catch((error) => {
     console.error('MongoDB connection error:', error);
@@ -376,6 +375,8 @@ app.post('/logout', async (req, res) => {
             res.status(500).json({ success: false, message: 'Logout failed.' });
         }
 });
+app.set('trust proxy', 1); // Enables 'trust proxy' for a single proxy (like Render)
+
 // Start the Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
