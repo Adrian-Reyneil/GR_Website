@@ -11,7 +11,7 @@ const validator = require('validator');
 const mailgun = require('mailgun-js'); // Import mailgun
 
 const app = express();
-
+const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGO_URI;
 
 /// Session management with MongoDB store
@@ -376,9 +376,7 @@ app.post('/logout', async (req, res) => {
             res.status(500).json({ success: false, message: 'Logout failed.' });
         }
 });
-app.set('trust proxy', 1); // Use 1 if behind a single proxy, or 'true' for trusting all
-
 // Start the Server
-app.listen(() => {
-    console.log(`Server is running on port 80`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
